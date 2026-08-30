@@ -5,7 +5,7 @@ Enter a relation schema with its functional, multivalued and join dependencies, 
 performs the complete normalization workflow — **showing every intermediate step rather than
 only the final answer.**
 
-Course: BACSE202 — Database Systems, VIT Chennai.
+Course: BACSE202 — Database Systems, VIT.
 
 ---
 
