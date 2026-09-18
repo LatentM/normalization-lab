@@ -22,7 +22,7 @@ const STAGE_INFO = {
 
 export default function MinimalCoverView({ analysis }) {
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
 
   const { cover, steps } = analysis.minimalCover;

@@ -4,11 +4,17 @@ import { getClosure } from '../logic/closure.js';
 import { Set, Fd, SetList, Empty } from './atoms.jsx';
 import { isSubset } from '../logic/setOps.js';
 
-export default function ClosureTrace({ parsed, analysis }) {
+// A single frozen empty array, so the "nothing analysed" render does not
+// produce a new [] on every pass and invalidate the memo.
+const EMPTY = Object.freeze([]);
+
+export default function ClosureTrace({ analysis }) {
   const [picked, setPicked] = useState([]);
 
-  const attributes = parsed?.attributes ?? [];
-  const fds = parsed?.fds ?? [];
+  // Read from `analysis`, not from a freshly-parsed object: `analysis` is a
+  // stable reference between renders, so the memo below actually memoizes.
+  const attributes = analysis?.parsed.attributes ?? EMPTY;
+  const fds = analysis?.parsed.fds ?? EMPTY;
 
   const result = useMemo(
     () => (picked.length ? getClosure(picked, fds) : null),
@@ -16,7 +22,7 @@ export default function ClosureTrace({ parsed, analysis }) {
   );
 
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
 
   const toggle = (a) =>
@@ -42,19 +48,15 @@ export default function ClosureTrace({ parsed, analysis }) {
             <button
               key={a}
               type="button"
-              className="btn ghost small"
-              style={
-                picked.includes(a)
-                  ? { background: 'var(--accent-soft)', color: 'var(--accent)', borderColor: 'var(--accent)' }
-                  : undefined
-              }
+              className={`attr-toggle${picked.includes(a) ? ' on' : ''}`}
+              aria-pressed={picked.includes(a)}
               onClick={() => toggle(a)}
             >
               {a}
             </button>
           ))}
           {picked.length > 0 && (
-            <button className="btn ghost small" onClick={() => setPicked([])}>reset</button>
+            <button className="attr-toggle clear" onClick={() => setPicked([])}>clear</button>
           )}
         </div>
 

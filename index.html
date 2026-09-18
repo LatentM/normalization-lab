@@ -3,15 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f4f4f2" />
     <title>Normalization Virtual Lab</title>
-    <meta name="description" content="An interactive virtual laboratory for relational database normalization: closure, keys, minimal cover, 1NF-5NF diagnosis, 3NF and BCNF decomposition, lossless join and dependency preservation." />
+    <meta
+      name="description"
+      content="An interactive virtual laboratory for relational database normalization: attribute closure, candidate keys, minimal cover, 1NF to 5NF diagnosis, 3NF synthesis and BCNF analysis, lossless join and dependency preservation — every step shown, not just the answer."
+    />
+    <meta name="author" content="BACSE202 Database Systems, VIT Chennai" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Normalization Virtual Lab" />
+    <meta
+      property="og:description"
+      content="Enter a relation and its dependencies. The lab runs the complete normalization workflow and shows the reasoning at every step."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Spectral:wght@400;500;600&display=swap"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230f5f6b'/><text x='16' y='23' font-family='ui-monospace,monospace' font-size='19' font-weight='600' fill='%23fff' text-anchor='middle'>3NF</text></svg>"
+    />
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      This lab performs its computation in the browser, so JavaScript must be enabled.
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

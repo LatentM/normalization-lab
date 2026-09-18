@@ -4,7 +4,7 @@ import { SCOPE_NOTE } from '../logic/higherNF.js';
 
 export default function HigherNFPanel({ analysis }) {
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
 
   const { four, four_decomp, five } = analysis.higher;
@@ -24,7 +24,7 @@ export default function HigherNFPanel({ analysis }) {
         {!hasMvds && (
           <div className="msg info">
             No multivalued dependencies were entered, so there is nothing beyond BCNF to test here. Add a line
-            like <code>A -&gt;&gt; B</code> on the Input tab, or load the preset
+            like <code>A -&gt;&gt; B</code> in the panel on the left, or load the preset
             "MVD — BCNF but not 4NF".
           </div>
         )}
@@ -127,7 +127,7 @@ export default function HigherNFPanel({ analysis }) {
 
         {!hasJd && (
           <div className="msg info">
-            No join dependency was entered. Add one as <code>*(A B, B C, C A)</code> on the Input tab to test
+            No join dependency was entered. Add one as <code>*(A B, B C, C A)</code> in the panel on the left to test
             it, or load the preset "Join dependency (5NF check)".
           </div>
         )}

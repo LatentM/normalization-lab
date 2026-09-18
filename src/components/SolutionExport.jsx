@@ -63,7 +63,7 @@ function plainText(a) {
 
 export default function SolutionExport({ analysis }) {
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
   const a = analysis;
   const text = plainText(a);

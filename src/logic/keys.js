@@ -35,7 +35,10 @@ export function getCandidateKeys(attributes, fds) {
     steps.push({
       stage: 'essential',
       set: essential,
-      reason: `${fmt(essential)} never appear(s) on the right of any dependency, so nothing can determine them. Every candidate key must contain them.`,
+      reason:
+        essential.length === 1
+          ? `${fmt(essential)} never appears on the right of any dependency, so nothing can determine it. Every candidate key must contain it.`
+          : `${fmt(essential)} never appear on the right of any dependency, so nothing can determine them. Every candidate key must contain them.`,
     });
   }
 

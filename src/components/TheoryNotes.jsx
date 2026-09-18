@@ -16,7 +16,7 @@ export default function TheoryNotes({ visited, onVisit }) {
       <h2>Theory notes</h2>
       <p className="sub">
         Every normal form the lab can diagnose, with the definition it actually tests, the violation it
-        removes, and a worked example. Read the definition, then go and break it on the Input tab —
+        removes, and a worked example. Read the definition, then go and break it in the panel on the left —
         the tool will name the dependency you used.
       </p>
 

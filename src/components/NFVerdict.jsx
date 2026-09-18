@@ -5,7 +5,7 @@ const NEXT = { '1NF': '2NF', '2NF': '3NF', '3NF': 'BCNF', BCNF: '4NF' };
 
 export default function NFVerdict({ analysis }) {
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
 
   const nf = analysis.normalForm;
@@ -28,7 +28,7 @@ export default function NFVerdict({ analysis }) {
             {firstFail ? (
               <>
                 The relation satisfies {highest} but not {firstFail.nf}. {firstFail.note}{' '}
-                Fix it on the Decomposition tab.
+                See the Decomposition section for a schema that reaches it.
               </>
             ) : (
               <>
@@ -115,7 +115,7 @@ export default function NFVerdict({ analysis }) {
             Next rung: {NEXT[highest]}.{' '}
             {highest === 'BCNF'
               ? 'Functional dependencies can take you no further — 4NF and 5NF need multivalued and join dependencies.'
-              : 'The Decomposition tab produces a schema that reaches it.'}
+              : 'The Decomposition section produces a schema that reaches it.'}
           </p>
         )}
       </div>

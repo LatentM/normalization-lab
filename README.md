@@ -5,7 +5,7 @@ Enter a relation schema with its functional, multivalued and join dependencies, 
 performs the complete normalization workflow — **showing every intermediate step rather than
 only the final answer.**
 
-Course: BACSE202 — Database Systems, VIT.
+Course: BACSE202 — Database Systems, VIT Chennai.
 
 ---
 
@@ -13,23 +13,28 @@ Course: BACSE202 — Database Systems, VIT.
 
 | Feature | Where |
 |---|---|
-| Parse a relation, FDs, MVDs and join dependencies, with validation | Input tab |
-| Attribute closure X⁺ with the dependency applied at each step | Closure & keys |
-| All superkeys and candidate keys; prime / non-prime classification | Closure & keys |
-| Minimal cover with all three reduction stages shown | Minimal cover |
+| Parse a relation, FDs, MVDs and join dependencies, with validation | left rail |
+| Attribute closure X⁺ with the dependency applied at each step | Closure |
+| All superkeys and candidate keys; prime / non-prime classification | Closure + rail |
+| Minimal cover with all three reduction stages shown | Cover |
 | Normal-form diagnosis 1NF → BCNF, naming the exact blocking dependency | Normal form |
 | 3NF decomposition by synthesis | Decomposition |
 | BCNF decomposition by recursive analysis | Decomposition |
 | Lossless-join verification by the chase (tableau shown) | Decomposition |
 | Dependency-preservation verification, dependency by dependency | Decomposition |
 | Side-by-side comparison of the 3NF and BCNF results | Decomposition |
-| MVD input, 4NF diagnosis and 4NF decomposition | Higher forms |
-| Join-dependency input and a scoped 5NF check | Higher forms |
+| MVD input, 4NF diagnosis and 4NF decomposition | 4NF · 5NF |
+| Join-dependency input and a scoped 5NF check | 4NF · 5NF |
 | Live insert / update / delete anomaly demonstration | Anomalies |
 | Theory notes for all five normal forms | Theory |
 | 10 auto-graded practice problems with hints and scoring | Practice |
-| Printable / copyable worked solution | Export |
+| Downloadable report — PDF, Word, plain text | Download |
+| Dependency graph figure | Graph |
 | Session persistence — saved relations and quiz progress | localStorage |
+| **Learn** — concept explanation, video, references | top-right nav |
+| **Help** — full user manual | top-right nav |
+| **Developed By** — team, register numbers, guide | top-right nav |
+| **Day / Night mode** | top-right nav |
 
 Everything runs client-side. No backend, no accounts, nothing uploaded.
 
@@ -50,12 +55,77 @@ npm run preview
 ```
 
 Deploy by dragging the generated `dist/` folder onto <https://app.netlify.com/drop>.
+`public/_headers` ships inside `dist/` and Netlify applies it automatically —
+it sets `nosniff`, `SAMEORIGIN`, a strict Content-Security-Policy (`connect-src 'none'`,
+since the app never makes a network request of its own) and a one-year immutable
+cache on the fingerprinted asset bundle.
 
 **Environment note.** On Windows, run Node and Vite natively — not inside WSL against a
 `/mnt/c/...` path. npm is dramatically slower across that boundary and WSL port forwarding is
 an avoidable failure point.
 
 ---
+
+## Digital Assignment requirements
+
+The five mandatory website sections are implemented as follows.
+
+| Requirement | Where | Notes |
+|---|---|---|
+| **A · Learn**, prominent top-right | Utility navigation, sticky | Concept explanation (six sections), an embedded YouTube video, and 19 references across books, papers, websites, videos and tools. |
+| **B · Developed By** | Utility navigation | Photograph, name, register number and contribution per member, plus *Guided By Dr. Swaminathan A, Assistant Professor*. |
+| **C · Help** | Utility navigation | A user manual: what the site does, an eight-step walkthrough, every control tabulated, the processing order, how to read each output, and troubleshooting. |
+| **D · Download** | Utility navigation | One report in three formats — PDF, Word (`.doc`) and plain text — containing inputs, processing steps, intermediate results, final output, the chase tableau and the preservation table. |
+| **E · Day / Night mode** | Utility navigation | ☀️ / 🌙 toggle, remembered per device. **Light is the default** — there is no `prefers-color-scheme` query, so every first-time visitor opens on the light page. |
+
+### ⚠ Two things must be completed before submission
+
+1. **The team has two members; the guidelines require 1 or 3.** Add the third member in
+   `src/content/team.js`. The Developed By section shows an error banner until this is done.
+2. **Student photographs are missing.** Put them in `public/team/` and set each member's
+   `photo` field. The section shows an initials placeholder and an error banner until then.
+
+Both are surfaced in the interface deliberately, so they cannot be forgotten.
+
+### Report generation
+
+`src/report.js` builds one structured report object and three writers format it, so the PDF,
+Word and text outputs always contain the same material. The PDF is drawn with jsPDF rather
+than the print dialog, which makes the output independent of the browser. jsPDF's built-in
+fonts are WinAnsi-encoded and have no glyph for `→`, `⁺` or `∅`, so the PDF writer
+transliterates to ASCII — and the forms chosen (`->`, `->>`, `+`) are exactly the input
+syntax this lab accepts, so a dependency in the PDF reads the way you would type it back in.
+
+## Production notes
+
+Things that were done deliberately and are worth being able to explain:
+
+- **Light by default, night mode on request.** The bare `:root` is the light palette and
+  there is deliberately no `prefers-color-scheme` query, so a dark-OS visitor still opens
+  on the light page — the lab is projected, printed and marked on light grounds. Night mode
+  is an explicit choice that stamps `data-theme="dark"` and is remembered. Only tokens are
+  redefined in that block, which is what keeps both themes in step: a colour defined only
+  there would simply not exist in day mode.
+- **Error boundary.** `src/components/ErrorBoundary.jsx` catches any render fault and
+  shows a recoverable panel with three ways out, instead of React unmounting the tree
+  and leaving a blank white page. During a viva a white page is the worst failure mode
+  there is, because there is nothing on screen to describe.
+- **Hard input limit.** Candidate-key search is over 2ⁿ subsets. Measured on this
+  implementation: ~26 ms at 10 attributes, ~240 ms at 14, ~1.2 s at 16, ~5.8 s at 18.
+  The parser warns above 10 and **refuses above 16** with an explanation, so a pasted
+  20-attribute relation cannot freeze the page mid-demo.
+- **Accessibility.** The section nav implements the WAI-ARIA tabs pattern — arrow keys
+  move between tabs, Home/End jump to the ends, roving `tabindex` means one Tab press
+  leaves the list, and the tab list sits outside the tab panel it controls. There is a
+  skip link to the results. Every text colour meets WCAG AA against its own ground
+  (the muted grey is 4.74:1, the accent 6.65:1, body ink 16.4:1).
+- **Storage never load-bearing.** Every `localStorage` read and write is wrapped; a
+  browser in private mode, or corrupt stored JSON, degrades to an in-memory session
+  instead of throwing on first paint.
+- **No network at run time.** The app fetches nothing, stores nothing remotely and has
+  no backend. The only external request is the Google Fonts stylesheet, and all three
+  faces have full local fallback stacks, so the lab is completely legible offline or
+  behind a firewall.
 
 ## Verifying correctness
 
@@ -105,7 +175,14 @@ src/
 │
 ├── components/            ← JSX only
 │   ├── atoms.jsx          Set / Fd / SetList / Empty
-│   ├── RelationInput.jsx
+│   ├── ErrorBoundary.jsx  catches render faults; no blank white page
+│   ├── RelationRail.jsx   the always-visible relation + standing facts
+│   ├── RelationInput.jsx  the Setup section: presets, readback, saved
+│   ├── LearnPanel.jsx     mandatory Learn section
+│   ├── HelpPanel.jsx      mandatory Help section — the user manual
+│   ├── DevelopedBy.jsx    mandatory Developed By section
+│   ├── DownloadPanel.jsx  mandatory Download section
+│   ├── DependencyGraph.jsx  the dependency set as an SVG directed graph
 │   ├── ClosureTrace.jsx
 │   ├── MinimalCoverView.jsx
 │   ├── NFVerdict.jsx
@@ -118,8 +195,12 @@ src/
 │
 ├── content/               ← plain data, no logic
 │   ├── theory.js          notes per normal form, anomaly table, presets
+│   ├── learn.js           problem statement, concept text, video, references
+│   ├── team.js            ⚠ team members and photos — COMPLETE BEFORE SUBMISSION
 │   └── problems.js        10 practice questions + verified answers
 │
+├── report.js              builds the report; PDF / Word / text writers
+├── theme.js               day / night mode
 ├── storage.js             localStorage save/load helpers
 ├── App.jsx                integration point — holds state, calls logic once
 └── index.css              the whole visual layer
@@ -223,6 +304,7 @@ test it.
 | Persistence | Browser localStorage | No backend, no accounts, no hosting cost |
 | Hosting | Netlify Drop | Drag `dist/`; no account setup, no CLI |
 | Tests | Plain Node scripts | No framework to install or configure |
+| Theme | Light only, explicit | Projected, printed and marked on light grounds |
 
 Typefaces (IBM Plex Sans, IBM Plex Mono, Newsreader) load from Google Fonts with full local
 fallback stacks, so the lab is completely legible offline or behind a firewall.

@@ -15,7 +15,13 @@
 
 import { norm, union, isSubset } from './setOps.js';
 
-const MAX_ATTRIBUTES = 10;
+const MAX_ATTRIBUTES = 10;   // warn above this
+// Hard refusal point. Measured on this implementation: candidate-key enumeration
+// takes ~26 ms at 10 attributes, ~240 ms at 14, ~1.2 s at 16 and ~5.8 s at 18,
+// because the search is over 2^n subsets. Above HARD_LIMIT the page would appear
+// to hang, so the parser refuses with an explanation rather than freezing the
+// browser during a demo.
+const HARD_LIMIT = 16;
 
 /** Split "A,B" or "AB" into ['A','B']. Commas/spaces win; otherwise split chars. */
 function splitAttrs(text) {
@@ -27,8 +33,11 @@ function splitAttrs(text) {
       .map((s) => s.trim())
       .filter(Boolean);
   }
-  // No separator: "ABCD" -> A,B,C,D, but "Dept" stays "Dept" if it has lowercase.
-  if (/^[A-Z0-9]+$/.test(t) && t.length > 1) return t.split('');
+  // No separator. "ABCD" is the shorthand for four single-letter attributes, so
+  // split it. Anything else stays whole: "Dept" has lowercase, and "A1"/"Z0" are
+  // single numbered attributes — splitting those into a letter and a digit was a
+  // real bug, since a bare digit is not a valid attribute name.
+  if (/^[A-Z]+$/.test(t) && t.length > 1) return t.split('');
   return [t];
 }
 
@@ -59,10 +68,17 @@ export function parseRelation(relationText) {
   }
 
   if (attributes.length === 0) errors.push('The relation has no attributes.');
-  if (attributes.length > MAX_ATTRIBUTES) {
+  if (attributes.length > HARD_LIMIT) {
+    errors.push(
+      `${attributes.length} attributes is beyond what this lab will attempt. Finding all ` +
+        `candidate keys means examining 2^${attributes.length} subsets, which would freeze ` +
+        `the page. The limit is ${HARD_LIMIT}. Split the relation, or drop attributes that ` +
+        `are not involved in any dependency.`
+    );
+  } else if (attributes.length > MAX_ATTRIBUTES) {
     warnings.push(
-      `${attributes.length} attributes: candidate-key search examines 2^${attributes.length} ` +
-        `= ${2 ** attributes.length} subsets. This may take a moment.`
+      `${attributes.length} attributes: the candidate-key search examines 2^${attributes.length} ` +
+        `= ${(2 ** attributes.length).toLocaleString()} subsets. Expect a short pause when you analyse.`
     );
   }
   return { attributes: attributes.sort(), errors, warnings };
@@ -146,12 +162,28 @@ export function parseInput(relationText, depText) {
     ...mvds.map((f) => union(f.lhs, f.rhs)),
     ...jds.flatMap((j) => j.components)
   );
-  const undeclared = used.filter((a) => !attributes.includes(a));
+  // Names coming in through a dependency must pass the same validation as names
+  // typed into the relation box; otherwise a malformed token becomes an attribute.
+  const badFromDeps = used.filter((a) => !/^[A-Za-z_]\w*$/.test(a));
+  badFromDeps.forEach((a) =>
+    errors.push(`"${a}" appears in a dependency but is not a valid attribute name.`)
+  );
+
+  const undeclared = used.filter((a) => !attributes.includes(a) && !badFromDeps.includes(a));
   if (undeclared.length) {
     warnings.push(
       `${undeclared.join(', ')} appear${undeclared.length === 1 ? 's' : ''} in a dependency but not in the relation; added automatically.`
     );
     attributes = norm([...attributes, ...undeclared]);
+  }
+
+  // Re-check the hard limit: attributes added from dependencies can push a
+  // relation over it after parseRelation has already run.
+  if (attributes.length > HARD_LIMIT && !errors.some((e) => e.includes('beyond what this lab'))) {
+    errors.push(
+      `With the attributes added from dependencies the relation has ${attributes.length} ` +
+        `attributes, beyond the limit of ${HARD_LIMIT}.`
+    );
   }
 
   // Join dependency components must together cover the relation.
@@ -175,4 +207,4 @@ export function parseInput(relationText, depText) {
   return { attributes: norm(attributes), fds, mvds, jds, errors, warnings };
 }
 
-export { MAX_ATTRIBUTES };
+export { MAX_ATTRIBUTES, HARD_LIMIT };

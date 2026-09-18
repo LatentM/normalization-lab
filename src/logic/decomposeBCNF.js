@@ -146,8 +146,3 @@ export function decomposeToBCNF(attributes, fds) {
       `Dependency preserving: ${dep.preserved ? 'yes (this time — BCNF does not promise it)' : `no — ${dep.lostFds.map(fmtFd).join(', ')} cannot be checked without a join`}.`,
   };
 }
-
-/** Side-by-side comparison used by DecompositionView. */
-export function compareDecompositions(attributes, fds) {
-  return null; // built in App.jsx from the two results; kept for contract symmetry
-}

@@ -140,7 +140,7 @@ export default function DecompositionView({ analysis }) {
   const [open, setOpen] = useState(false);
 
   if (!analysis) {
-    return <Empty title="Nothing analysed yet">Define a relation on the Input tab and press Analyse.</Empty>;
+    return <Empty title="Nothing analysed yet">Enter a relation in the panel on the left and press Analyse.</Empty>;
   }
 
   const { three, bcnf } = analysis.decomposition;
