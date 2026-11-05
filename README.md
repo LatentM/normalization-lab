@@ -1,6 +1,6 @@
 # Normalization Virtual Lab (v2)
 
-BACSE202 Database Systems · VIT Chennai · Digital Assignment
+BACSE202 Database Systems · VIT · Digital Assignment
 
 A single-page web app for relational normalization: closures, candidate keys, minimal cover,
 1NF–5NF analysis, 3NF synthesis, BCNF decomposition, chase test and dependency preservation,
